@@ -1,0 +1,85 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+
+# Test, type-check and lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ---------------------------------------------------------------------------
+# Odoo
+# ---------------------------------------------------------------------------
+# Local server configuration
+odoo.conf
+.openerp_serverrc
+.odoorc
+*.log
+
+# Local database dumps, backups and filestores
+*.dump
+*.sql
+*.sql.gz
+*.backup
+/filestore/
+/.local/
+/.odoo/
+
+# Compiled translations (the source is i18n/*.po)
+*.mo
+
+# ---------------------------------------------------------------------------
+# Secrets and local environment overrides
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# ---------------------------------------------------------------------------
+# Operating system and editors
+# ---------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.tags
+
+# ---------------------------------------------------------------------------
+# Local agent tooling (not part of the addon)
+# ---------------------------------------------------------------------------
+.agents/
+skills-lock.json
+.codegraph/

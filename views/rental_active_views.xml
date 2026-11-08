@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_rental_active_line_list" model="ir.ui.view">
+        <field name="name">sale.order.line.rental.active.list</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <list string="Artículos en renta" create="0" edit="0" delete="0">
+                <field name="order_id"/>
+                <field name="order_partner_id"/>
+                <field name="product_id"/>
+                <field name="product_uom_qty"/>
+                <field name="rental_entrega_dt"/>
+                <field name="rental_recoleccion_dt"/>
+                <field name="rental_fecha_evento" optional="hide"/>
+                <field name="price_subtotal" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_active_line_search" model="ir.ui.view">
+        <field name="name">sale.order.line.rental.active.search</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="order_partner_id"/>
+                <field name="product_id"/>
+                <group>
+                    <filter name="group_product" string="Producto"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_order" string="Orden"
+                            context="{'group_by': 'order_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

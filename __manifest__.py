@@ -1,0 +1,40 @@
+{
+    "name": "Renta de Productos por Evento",
+    "version": "19.0.1.0.0",
+    "summary": "Renta de productos por evento, con cotizaciones separadas de venta.",
+    "description": """
+Renta de Productos por Evento
+=============================
+
+Módulo genérico para rentar productos con una tarifa fija **por evento**, sin
+importar la duración del mismo. Un mismo producto puede venderse y rentarse.
+
+- Una cotización es de **venta o de renta**, nunca las dos.
+- Menú **Rentas** separado de Ventas, reutilizando el flujo de `sale.order`.
+- Productos con tarifa de renta propia y cuenta de ingreso de renta separada.
+- Fechas del evento, entrega y recolección a nivel de cotización.
+- Movimientos reales de inventario al entregar y devolver.
+- PDF de confirmación propio y reportes de rentas activas y retrasos.
+
+Este módulo no incluye datos, dominios ni credenciales de ningún cliente: cada
+despliegue vive en su propio repositorio.
+""",
+    "author": "ssant0",
+    "license": "LGPL-3",
+    "category": "Sales/Sales",
+    "depends": ["sale", "stock", "account", "mail"],
+    "data": [
+        "security/rental_security.xml",
+        "views/product_views.xml",
+        "report/rental_report.xml",
+        "views/sale_order_views.xml",
+        "views/rental_active_views.xml",
+        "views/rental_report_views.xml",
+        "views/menus.xml",
+        "data/rental_mail_templates.xml",
+        "data/ir_cron.xml",
+    ],
+    "installable": True,
+    "application": True,
+    "auto_install": False,
+}

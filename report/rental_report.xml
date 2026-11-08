@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Datos de renta en el documento de venta (cotización y confirmación) -->
+    <template id="report_saleorder_document_rental"
+              inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@id='informations']" position="after">
+            <div class="row mb-4" name="rental_information" t-if="doc.is_rental">
+                <div class="col">
+                    <strong>Fecha del evento</strong>
+                    <div t-field="doc.fecha_evento" t-options='{"widget": "date"}'/>
+                </div>
+                <div class="col">
+                    <strong>Entrega</strong>
+                    <div t-field="doc.entrega_dt"/>
+                </div>
+                <div class="col">
+                    <strong>Recolección</strong>
+                    <div t-field="doc.recoleccion_dt"/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-set='layout_document_title']" position="replace">
+            <t t-set="layout_document_title">
+                <span t-if="doc.is_rental and doc.state not in ('draft', 'sent', 'cancel')">Confirmación de renta # </span>
+                <span t-elif="is_proforma">Pro-Forma Invoice # </span>
+                <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                <span t-else="">Order # </span>
+                <span t-field="doc.name">SO0000</span>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="report_rental_order">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_rental_order" model="ir.actions.report">
+        <field name="name">Confirmación de renta</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_rental_fixed.report_rental_order</field>
+        <field name="report_file">sale_rental_fixed.report_rental_order</field>
+        <field name="print_report_name">'Renta - %s' % (object.name)</field>
+    </record>
+
+</odoo>

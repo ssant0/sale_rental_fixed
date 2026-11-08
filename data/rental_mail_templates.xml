@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_template_rental_return_reminder" model="mail.template">
+        <field name="name">Rentas: recordatorio de recolección</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="subject">Recordatorio de recolección de renta: {{ object.name }}</field>
+        <field name="body_html" type="html">
+            <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333;">
+                <p>Hola,</p>
+                <p>
+                    La renta <strong t-out="object.name"/> del cliente
+                    <strong t-out="object.partner_id.name"/> tiene recolección
+                    programada para <strong t-out="object.recoleccion_dt"/>.
+                </p>
+                <p>Productos:</p>
+                <ul>
+                    <li t-foreach="object.order_line.filtered(lambda l: not l.display_type)" t-as="line">
+                        <span t-out="line.product_id.display_name"/>
+                        (cantidad: <span t-out="line.product_uom_qty"/>)
+                    </li>
+                </ul>
+                <p>Este es un correo automático del módulo de rentas.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_rental_late" model="mail.template">
+        <field name="name">Rentas: alerta de retraso</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="subject">Renta atrasada: {{ object.name }}</field>
+        <field name="body_html" type="html">
+            <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333;">
+                <p>Hola,</p>
+                <p>
+                    La renta <strong t-out="object.name"/> del cliente
+                    <strong t-out="object.partner_id.name"/> debió recolectarse el
+                    <strong t-out="object.recoleccion_dt"/> y sigue sin devolverse.
+                </p>
+                <p>Productos:</p>
+                <ul>
+                    <li t-foreach="object.order_line.filtered(lambda l: not l.display_type)" t-as="line">
+                        <span t-out="line.product_id.display_name"/>
+                        (cantidad: <span t-out="line.product_uom_qty"/>)
+                    </li>
+                </ul>
+                <p>Este es un correo automático del módulo de rentas.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

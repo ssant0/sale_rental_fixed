@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_rental" model="ir.ui.view">
+        <field name="name">sale.order.form.rental</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                <field name="is_rental" readonly="state in ['sale', 'done']"/>
+                <field name="fecha_evento" invisible="not is_rental" required="is_rental"/>
+                <field name="entrega_dt" invisible="not is_rental" required="is_rental"/>
+                <field name="recoleccion_dt" invisible="not is_rental" required="is_rental"/>
+                <field name="rental_status" widget="badge" invisible="not is_rental or state != 'sale'"/>
+                <field name="rental_cancel_reason" invisible="state != 'cancel'"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_rental_deliver" type="object" string="Entregar"
+                        class="btn-primary"
+                        invisible="not is_rental or state != 'sale' or rental_status != 'pending'"/>
+                <button name="action_rental_return" type="object" string="Devolver"
+                        invisible="not is_rental or state != 'sale' or rental_status != 'active'"/>
+                <button name="action_rental_close" type="object" string="Cerrar renta"
+                        invisible="not is_rental or rental_status != 'returned'"/>
+                <button name="%(sale_rental_fixed.action_report_rental_order)d" type="action"
+                        string="Confirmación de renta"
+                        invisible="not is_rental or state not in ['sale', 'done']"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

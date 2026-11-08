@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_rental_order_list" model="ir.ui.view">
+        <field name="name">sale.order.rental.list</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list string="Rentas" create="0" decoration-danger="rental_is_late">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id" optional="hide"/>
+                <field name="fecha_evento"/>
+                <field name="entrega_dt"/>
+                <field name="recoleccion_dt"/>
+                <field name="rental_status"/>
+                <field name="rental_is_late" optional="show"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="state" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_order_search" model="ir.ui.view">
+        <field name="name">sale.order.rental.search</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter name="filter_active" string="Activas"
+                        domain="[('rental_status', '=', 'active')]"/>
+                <filter name="filter_late" string="Retrasadas"
+                        domain="[('rental_is_late', '=', True)]"/>
+                <group>
+                    <filter name="group_partner" string="Cliente"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_status" string="Estado de renta"
+                            context="{'group_by': 'rental_status'}"/>
+                    <filter name="group_user" string="Vendedor"
+                            context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_rental_income_pivot" model="ir.ui.view">
+        <field name="name">sale.order.rental.income.pivot</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="is_rental" type="row"/>
+                <field name="date_order" type="col"/>
+                <field name="amount_untaxed" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_rental_income_graph" model="ir.ui.view">
+        <field name="name">sale.order.rental.income.graph</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="is_rental"/>
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_rental_orders_active" model="ir.actions.act_window">
+        <field name="name">Rentas activas</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_rental_order_list"/>
+        <field name="search_view_id" ref="view_rental_order_search"/>
+        <field name="domain">[('is_rental', '=', True), ('state', '=', 'sale'), ('rental_status', '=', 'active')]</field>
+    </record>
+
+    <record id="action_rental_orders_late" model="ir.actions.act_window">
+        <field name="name">Retrasos</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_rental_order_list"/>
+        <field name="search_view_id" ref="view_rental_order_search"/>
+        <field name="domain">[('is_rental', '=', True), ('state', '=', 'sale'), ('rental_status', 'in', ['pending', 'active']), ('rental_is_late', '=', True)]</field>
+    </record>
+
+    <record id="action_rental_income" model="ir.actions.act_window">
+        <field name="name">Ingresos (renta vs venta)</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="domain">[('state', '=', 'sale')]</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'sequence': 1, 'view_mode': 'pivot', 'view_id': ref('view_rental_income_pivot')}), (0, 0, {'sequence': 2, 'view_mode': 'graph', 'view_id': ref('view_rental_income_graph')}), (0, 0, {'sequence': 3, 'view_mode': 'list', 'view_id': ref('view_rental_order_list')})]"/>
+    </record>
+
+</odoo>
