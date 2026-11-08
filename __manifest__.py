@@ -20,6 +20,7 @@ Este módulo no incluye datos, dominios ni credenciales de ningún cliente: cada
 despliegue vive en su propio repositorio.
 """,
     "author": "ssant0",
+    "website": "https://github.com/ssant0/sale_rental_fixed",
     "license": "LGPL-3",
     "category": "Sales/Sales",
     "depends": ["sale", "stock", "account", "mail"],
