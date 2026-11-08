@@ -1,5 +1,7 @@
 # 🎪 Renta de Productos por Evento
 
+**English** · **[Español](README.es.md)**
+
 Fixed-price product rentals per event for Odoo 19, kept separate from regular sales quotations.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
@@ -239,6 +241,7 @@ This is a small, single-maintainer addon with no enforced branch model or commit
 - Write user-facing Python errors with `_()`; XML labels and help texts stay in Spanish.
 - Verify manually following the acceptance check above — there are no automated tests.
 - Never add client names, domains, emails, credentials or deployment data.
+- Keep [`README.es.md`](README.es.md) in sync with this file when behavior changes.
 
 ## License
 
