@@ -12,6 +12,7 @@
                 <field name="fecha_evento"/>
                 <field name="entrega_dt"/>
                 <field name="recoleccion_dt"/>
+                <field name="domicilio_entrega" optional="hide"/>
                 <field name="rental_status"/>
                 <field name="rental_is_late" optional="show"/>
                 <field name="amount_total" sum="Total"/>
@@ -27,6 +28,7 @@
             <search>
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="domicilio_entrega"/>
                 <field name="user_id"/>
                 <filter name="filter_active" string="Activas"
                         domain="[('rental_status', '=', 'active')]"/>

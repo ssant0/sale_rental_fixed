@@ -22,6 +22,12 @@ class SaleOrder(models.Model):
     fecha_evento = fields.Date(string="Fecha del evento")
     entrega_dt = fields.Datetime(string="Entrega")
     recoleccion_dt = fields.Datetime(string="Recolección")
+    domicilio_entrega = fields.Char(
+        string="Domicilio de entrega",
+        help="Domicilio donde se entrega la renta. Se captura en cada "
+        "cotización porque un mismo cliente puede recibir en distintos "
+        "domicilios; no se toma de la dirección del contacto.",
+    )
     rental_status = fields.Selection(
         selection=[
             ("pending", "Por entregar"),
@@ -150,14 +156,17 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         missing = self.filtered("is_rental").filtered(
             lambda order: not (
-                order.fecha_evento and order.entrega_dt and order.recoleccion_dt
+                order.fecha_evento
+                and order.entrega_dt
+                and order.recoleccion_dt
+                and order.domicilio_entrega
             )
         )
         if missing:
             raise ValidationError(
                 _(
                     "Antes de confirmar una renta captura la fecha del evento, "
-                    "la entrega y la recolección: %s",
+                    "la entrega, la recolección y el domicilio de entrega: %s",
                     ", ".join(missing.mapped("name")),
                 )
             )

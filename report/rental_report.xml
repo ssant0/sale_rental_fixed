@@ -19,6 +19,13 @@
                     <div t-field="doc.recoleccion_dt"/>
                 </div>
             </div>
+            <div class="row mb-4" name="rental_address"
+                 t-if="doc.is_rental and doc.domicilio_entrega">
+                <div class="col">
+                    <strong>Domicilio de entrega</strong>
+                    <div t-field="doc.domicilio_entrega"/>
+                </div>
+            </div>
         </xpath>
         <xpath expr="//t[@t-set='layout_document_title']" position="replace">
             <t t-set="layout_document_title">
