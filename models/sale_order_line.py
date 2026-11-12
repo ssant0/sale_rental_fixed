@@ -13,6 +13,9 @@ class SaleOrderLine(models.Model):
     rental_recoleccion_dt = fields.Datetime(
         related="order_id.recoleccion_dt", string="Recolección"
     )
+    rental_domicilio_entrega = fields.Char(
+        related="order_id.domicilio_entrega", string="Domicilio de entrega"
+    )
 
     def _prepare_invoice_line(self, **optional_values):
         """Aplica la cuenta de ingreso de renta a las líneas facturadas.

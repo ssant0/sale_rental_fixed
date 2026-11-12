@@ -5,7 +5,7 @@
 Renta de productos con tarifa fija por evento para Odoo 19, separada de las cotizaciones de venta normales.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.0.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.1.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -102,9 +102,9 @@ La configuración del despliegue proviene del archivo de configuración estánda
    - Define la **Tarifa de renta (por evento)**.
    - Opcionalmente define la **Cuenta de ingreso de renta** (visible para usuarios de contabilidad).
 
-2. **Crea una cotización de renta.** Ve a **Rentas → Cotizaciones de renta → Nuevo**. La orden se abre con **Es renta** habilitado; elige el cliente, llena **Fecha del evento**, **Entrega** y **Recolección**, y agrega productos. Solo se aceptan productos con *Se puede rentar*.
+2. **Crea una cotización de renta.** Ve a **Rentas → Cotizaciones de renta → Nuevo**. La orden se abre con **Es renta** habilitado; elige el cliente, llena **Fecha del evento**, **Entrega**, **Recolección** y **Domicilio de entrega**, y agrega productos. Solo se aceptan productos con *Se puede rentar*.
 
-3. **Confirma la orden.** La confirmación requiere las tres fechas y que la recolección no sea anterior a la entrega. La tarifa se copia a cada línea y permanece editable.
+3. **Confirma la orden.** La confirmación requiere las tres fechas y el domicilio de entrega, y que la recolección no sea anterior a la entrega. La tarifa se copia a cada línea y permanece editable.
 
 4. **Ejecuta la renta** desde el encabezado de la orden:
    - **Entregar** — valida las salidas de inventario y pasa la renta a *Activo*.
@@ -138,7 +138,7 @@ env['sale.order']._cron_rental_notifications()
 Verificación manual de aceptación:
 
 1. Producto → pestaña **Renta**: `Se puede rentar` activo y tarifa definida.
-2. Cotización de renta con las tres fechas y un producto rentable, confirmada.
+2. Cotización de renta con las tres fechas, el domicilio de entrega y un producto rentable, confirmada.
 3. **Entregar** → *Activo*; **Devolver** → *Devuelto*; **Cerrar renta** → *Cerrado*.
 4. **Rentas → Reportes**: rentas activas, retrasos, ingresos.
 
@@ -183,7 +183,8 @@ pending (Por entregar) ──Entregar──> active (Activo) ──Devolver─�
 Reglas que aplica el módulo:
 
 - Una cotización es **venta XOR renta**. Una vez confirmada, `is_rental` no se puede cambiar: primero cancela y regresa la orden a cotización.
-- Las cotizaciones de renta solo aceptan productos marcados como rentables; la confirmación requiere fecha del evento, entrega y recolección.
+- Las cotizaciones de renta solo aceptan productos marcados como rentables; la confirmación requiere fecha del evento, entrega, recolección y domicilio de entrega.
+- El domicilio de entrega (`domicilio_entrega`) se captura en cada cotización porque un mismo cliente puede recibir rentas en domicilios distintos; es independiente de la dirección del contacto y de la facturación.
 - La recolección no puede ser anterior a la entrega.
 - El precio es la **tarifa fija por evento** del producto, convertida a la moneda de la orden cuando difieren, y permanece editable por línea — nunca se prorratea por duración.
 - Entregar y devolver crean **movimientos reales de inventario** (salida y entrada).
@@ -212,7 +213,7 @@ Reglas que aplica el módulo:
 
 ## Reportes y automatizaciones
 
-- **Confirmación de renta** — PDF construido sobre `sale.report_saleorder_document`, que agrega las fechas del evento, entrega y recolección, y reemplaza el título del documento en rentas confirmadas. Se imprime desde el encabezado de la orden.
+- **Confirmación de renta** — PDF construido sobre `sale.report_saleorder_document`, que agrega las fechas del evento, entrega y recolección, el domicilio de entrega y reemplaza el título del documento en rentas confirmadas. Se imprime desde el encabezado de la orden.
 - **Rentas activas** — rentas confirmadas en *Activo*, con cliente, fechas, estado e importe.
 - **Retrasos** — rentas confirmadas cuya fecha de recolección ya pasó y que siguen *Por entregar* o *Activo*; las filas retrasadas se resaltan en rojo en la lista de rentas.
 - **Ingresos (renta vs venta)** — tabla dinámica y gráfica de barras que comparan los ingresos de renta y de venta en órdenes confirmadas.
@@ -236,7 +237,7 @@ Es un addon pequeño, mantenido por una sola persona, sin modelo de ramas ni con
 
 - Conserva el nombre técnico `sale_rental_fixed`; está incrustado en XML IDs, llamadas `env.ref`, nombres de reportes y el manifiesto.
 - Sube `version` en `__manifest__.py` (manteniendo el formato `19.0.x.y.z`) cuando cambie el comportamiento, y agrega los archivos XML nuevos a la lista `data` en orden de carga.
-- Conserva los nombres de los campos de negocio (`fecha_evento`, `entrega_dt`, `recoleccion_dt`) y los interruptores técnicos (`is_rental`, `rental_status`); las vistas, reportes y traducciones dependen de ellos.
+- Conserva los nombres de los campos de negocio (`fecha_evento`, `entrega_dt`, `recoleccion_dt`, `domicilio_entrega`) y los interruptores técnicos (`is_rental`, `rental_status`); las vistas, reportes y traducciones dependen de ellos.
 - Mantén las dependencias en módulos estándar de Odoo; no agregues OCA ni addons personalizados.
 - Escribe los errores de Python visibles al usuario con `_()`; las etiquetas y textos de ayuda en XML siguen en español.
 - Verifica manualmente siguiendo la lista de aceptación anterior — no hay pruebas automatizadas.

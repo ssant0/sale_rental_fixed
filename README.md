@@ -5,7 +5,7 @@
 Fixed-price product rentals per event for Odoo 19, kept separate from regular sales quotations.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.0.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.1.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -102,9 +102,9 @@ Deployment settings come from the standard Odoo configuration file:
    - Set **Tarifa de renta (por evento)**.
    - Optionally set **Cuenta de ingreso de renta** (visible to accounting users).
 
-2. **Create a rental quotation.** Go to **Rentas → Cotizaciones de renta → New**. The order opens with **Es renta** enabled; pick the customer, fill **Fecha del evento**, **Entrega** and **Recolección**, and add products. Only products with *Se puede rentar* are accepted.
+2. **Create a rental quotation.** Go to **Rentas → Cotizaciones de renta → New**. The order opens with **Es renta** enabled; pick the customer, fill **Fecha del evento**, **Entrega**, **Recolección** and **Domicilio de entrega**, and add products. Only products with *Se puede rentar* are accepted.
 
-3. **Confirm the order.** Confirmation requires the three dates and the collection must not precede delivery. The tariff is copied to each line and stays editable.
+3. **Confirm the order.** Confirmation requires the three dates and the delivery address, and the collection must not precede delivery. The tariff is copied to each line and stays editable.
 
 4. **Run the rental** from the order header:
    - **Entregar** — validates the outgoing stock pickings and moves the rental to *Activo*.
@@ -138,7 +138,7 @@ env['sale.order']._cron_rental_notifications()
 Manual acceptance check:
 
 1. Product → **Renta** tab: `Se puede rentar` on, tariff set.
-2. Rental quotation with the three dates and a rentable product, confirmed.
+2. Rental quotation with the three dates, the delivery address and a rentable product, confirmed.
 3. **Entregar** → *Activo*; **Devolver** → *Devuelto*; **Cerrar renta** → *Cerrado*.
 4. **Rentas → Reportes**: active rentals, late rentals, income.
 
@@ -183,7 +183,8 @@ pending (Por entregar) ──Entregar──> active (Activo) ──Devolver─�
 Rules enforced by the module:
 
 - A quotation is **sale XOR rental**. Once confirmed, `is_rental` cannot be changed: cancel and return the order to quotation first.
-- Rental quotations only accept products marked as rentable; confirmation requires event, delivery and collection dates.
+- Rental quotations only accept products marked as rentable; confirmation requires event, delivery and collection dates plus the delivery address.
+- The delivery address (`domicilio_entrega`) is typed on each quotation because the same customer may receive rentals at different addresses; it is independent from the contact's address and from invoicing.
 - Collection cannot be earlier than delivery.
 - The price is the product's **fixed per-event tariff**, converted to the order currency when they differ, and remains editable per line — it is never prorated by duration.
 - Deliver and return create **real stock moves** (outgoing and incoming).
@@ -212,7 +213,7 @@ Rules enforced by the module:
 
 ## Reports and Automations
 
-- **Confirmación de renta** — PDF built on `sale.report_saleorder_document`, adding event, delivery and collection dates and replacing the document title for confirmed rentals. Print it from the order header.
+- **Confirmación de renta** — PDF built on `sale.report_saleorder_document`, adding event, delivery and collection dates, the delivery address and replacing the document title for confirmed rentals. Print it from the order header.
 - **Rentas activas** — confirmed rentals in *Activo*, with partner, dates, status and amount.
 - **Retrasos** — confirmed rentals past their collection datetime that are still *Por entregar* or *Activo*; late rows are highlighted in red in the rental list.
 - **Ingresos (renta vs venta)** — pivot and bar graph comparing rental and sales revenue on confirmed orders.
@@ -236,7 +237,7 @@ This is a small, single-maintainer addon with no enforced branch model or commit
 
 - Keep the technical name `sale_rental_fixed`; it is embedded in XML IDs, `env.ref` calls, report names and the manifest.
 - Bump `version` in `__manifest__.py` (keep the `19.0.x.y.z` format) when behavior changes, and add new XML files to the `data` list in load order.
-- Preserve the business field names (`fecha_evento`, `entrega_dt`, `recoleccion_dt`) and technical switches (`is_rental`, `rental_status`); views, reports and translations depend on them.
+- Preserve the business field names (`fecha_evento`, `entrega_dt`, `recoleccion_dt`, `domicilio_entrega`) and technical switches (`is_rental`, `rental_status`); views, reports and translations depend on them.
 - Keep dependencies to standard Odoo modules; do not add OCA or custom addons.
 - Write user-facing Python errors with `_()`; XML labels and help texts stay in Spanish.
 - Verify manually following the acceptance check above — there are no automated tests.

@@ -1,6 +1,6 @@
 {
     "name": "Renta de Productos por Evento",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "summary": "Renta de productos por evento, con cotizaciones separadas de venta.",
     "description": """
 Renta de Productos por Evento
@@ -13,6 +13,7 @@ importar la duración del mismo. Un mismo producto puede venderse y rentarse.
 - Menú **Rentas** separado de Ventas, reutilizando el flujo de `sale.order`.
 - Productos con tarifa de renta propia y cuenta de ingreso de renta separada.
 - Fechas del evento, entrega y recolección a nivel de cotización.
+- Domicilio de entrega capturado manualmente en cada cotización de renta.
 - Movimientos reales de inventario al entregar y devolver.
 - PDF de confirmación propio y reportes de rentas activas y retrasos.
 

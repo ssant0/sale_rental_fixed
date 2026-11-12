@@ -11,6 +11,8 @@
                 <field name="fecha_evento" invisible="not is_rental" required="is_rental"/>
                 <field name="entrega_dt" invisible="not is_rental" required="is_rental"/>
                 <field name="recoleccion_dt" invisible="not is_rental" required="is_rental"/>
+                <field name="domicilio_entrega" invisible="not is_rental" required="is_rental" colspan="2"
+                       placeholder="Calle, número, colonia, ciudad y referencias"/>
                 <field name="rental_status" widget="badge" invisible="not is_rental or state != 'sale'"/>
                 <field name="rental_cancel_reason" invisible="state != 'cancel'"/>
             </xpath>

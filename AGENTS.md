@@ -26,8 +26,8 @@ alone does not reload them.
 There are no automated tests. Verify manually:
 
 1. Product → **Renta** tab: enable **Se puede rentar** and set the tariff.
-2. Create a rental quotation with the three dates, add a rentable product,
-   confirm it.
+2. Create a rental quotation with the three dates and the delivery address,
+   add a rentable product, confirm it.
 3. **Entregar** → Activo; **Devolver** → Devuelto; **Cerrar renta**.
 4. Review the Rentas reports (activas, retrasos, ingresos).
 
@@ -75,8 +75,11 @@ repository.
 - A quotation is **sale XOR rental**. Changing `is_rental` is blocked once the
   order is confirmed; the user must cancel and return to quotation.
 - Rental orders only accept products with `rental_ok`; confirmation requires
-  `fecha_evento`, `entrega_dt` and `recoleccion_dt`, and return must not
-  precede delivery.
+  `fecha_evento`, `entrega_dt`, `recoleccion_dt` and `domicilio_entrega`, and
+  return must not precede delivery.
+- `domicilio_entrega` is typed on each quotation instead of using the contact
+  address: the same customer may receive rentals at different addresses, and
+  the field must stay out of the invoicing address.
 - Price is the product's **fixed per-event tariff** (`rental_price`), not
   prorated by duration, and remains editable per line.
 - Lifecycle is `pending → active → returned → closed`, enforced by
@@ -115,9 +118,9 @@ repository.
 - Dependencies are standard Odoo only: `sale`, `stock`, `account`, `mail`. Do
   not add OCA or other custom-addon dependencies.
 - Match existing naming: business fields in Spanish (`fecha_evento`,
-  `entrega_dt`, `recoleccion_dt`), technical switches in English
-  (`is_rental`, `rental_status`). Do not rename them casually — views, reports
-  and translation keys depend on them.
+  `entrega_dt`, `recoleccion_dt`, `domicilio_entrega`), technical switches in
+  English (`is_rental`, `rental_status`). Do not rename them casually — views,
+  reports and translation keys depend on them.
 - Use `_()` for user-facing Python errors; XML strings and labels are written
   directly in Spanish.
 - Never add client names, domains, emails, credentials or deployment data.
