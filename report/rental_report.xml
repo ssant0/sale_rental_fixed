@@ -27,6 +27,18 @@
                 </div>
             </div>
         </xpath>
+        <!-- Firma manual del cliente al final del documento confirmado -->
+        <xpath expr="//div[@class='page']" position="inside">
+            <div class="row mt-5" name="rental_signature"
+                 t-if="doc.is_rental and doc.state in ('sale', 'done')">
+                <div class="col-6 offset-3 text-center">
+                    <div style="height: 60px;"></div>
+                    <div style="border-top: 1px solid #000000; padding-top: 4px;">
+                        Firma de conformidad del cliente
+                    </div>
+                </div>
+            </div>
+        </xpath>
         <xpath expr="//t[@t-set='layout_document_title']" position="replace">
             <t t-set="layout_document_title">
                 <span t-if="doc.is_rental and doc.state not in ('draft', 'sent', 'cancel')">Confirmación de renta # </span>

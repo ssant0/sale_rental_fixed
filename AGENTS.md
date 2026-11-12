@@ -87,6 +87,9 @@ repository.
   keep model and view conditions in sync.
 - Deliveries/returns create real stock moves. Partial returns, damage charges,
   recurring invoicing and CFDI de anticipo are out of scope for v1.
+- Confirmed rental PDFs end with a blank black signature line for the customer.
+  It is print layout only: no field is added and nothing is stored, so the
+  signature is captured by hand on the printed copy.
 - Rental invoice lines use `rental_income_account_id` when set; otherwise the
   native product/category income account.
 - Notifications are sent once. `write()` resets `rental_late_notified` and

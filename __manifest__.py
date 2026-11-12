@@ -1,6 +1,6 @@
 {
     "name": "Renta de Productos por Evento",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "summary": "Renta de productos por evento, con cotizaciones separadas de venta.",
     "description": """
 Renta de Productos por Evento
@@ -15,7 +15,8 @@ importar la duración del mismo. Un mismo producto puede venderse y rentarse.
 - Fechas del evento, entrega y recolección a nivel de cotización.
 - Domicilio de entrega capturado manualmente en cada cotización de renta.
 - Movimientos reales de inventario al entregar y devolver.
-- PDF de confirmación propio y reportes de rentas activas y retrasos.
+- PDF de confirmación propio con línea de firma manual del cliente.
+- Reportes de rentas activas y retrasos.
 
 Este módulo no incluye datos, dominios ni credenciales de ningún cliente: cada
 despliegue vive en su propio repositorio.
