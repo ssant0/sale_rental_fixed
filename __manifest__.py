@@ -1,6 +1,6 @@
 {
     "name": "Renta de Productos por Evento",
-    "version": "19.0.1.4.0",
+    "version": "19.0.1.5.0",
     "summary": "Renta de productos por evento, con cotizaciones separadas de venta.",
     "description": """
 Renta de Productos por Evento

@@ -4,15 +4,6 @@
     <!-- Datos de renta en el documento de venta (cotización y confirmación) -->
     <template id="report_saleorder_document_rental"
               inherit_id="sale.report_saleorder_document">
-        <!-- La firma se ancla al pie de la página solo en confirmaciones de
-             renta que caben en una página. wkhtmltopdf no soporta flexbox
-             moderno, por eso se usa position:absolute dentro de una página con
-             min-height. En rentas largas se deja el flujo normal para no
-             arriesgar el salto de página. -->
-        <xpath expr="//t[@t-set='doc']" position="after">
-            <t t-set="rental_signature_bottom"
-               t-value="doc.is_rental and doc.state in ('sale', 'done') and report_type == 'pdf' and len(doc.order_line) &lt;= 5"/>
-        </xpath>
         <xpath expr="//div[@id='informations']" position="after">
             <div class="row mb-4" name="rental_information" t-if="doc.is_rental">
                 <div class="col">
@@ -55,25 +46,27 @@
         <xpath expr="//t[@t-set='information_block']" position="attributes">
             <attribute name="t-if">not doc.is_rental</attribute>
         </xpath>
-        <!-- Firma manual del cliente al final del documento confirmado.
-             En rentas cortas la página se vuelve relativa y la firma se ancla
-             con position:absolute al fondo de una altura mínima de página. -->
-        <xpath expr="//div[@class='page']" position="attributes">
-            <attribute name="t-att-style">rental_signature_bottom and 'position: relative; min-height: 160mm;' or None</attribute>
-        </xpath>
+        <!-- Firma manual del cliente, solo en el reporte "Confirmación de
+             renta". El espaciador va en el flujo normal para que nunca se
+             encime con la tabla y empuja la firma al pie de la última página. -->
         <xpath expr="//div[@class='page']" position="inside">
-            <div name="rental_signature"
-                 t-if="doc.is_rental and doc.state in ('sale', 'done')"
-                 t-att-style="rental_signature_bottom and 'position: absolute; left: 0; right: 0; bottom: 0; padding-top: 8mm; page-break-inside: avoid;' or 'margin-top: 8mm; page-break-inside: avoid;'">
-                <div class="row">
-                    <div class="col-6 offset-3 text-center">
-                        <div style="height: 60px;"></div>
-                        <div style="border-top: 1px solid #000000; padding-top: 4px;">
-                            Firma de conformidad del cliente
+            <t t-if="is_rental_confirmation and report_type == 'pdf' and doc.is_rental and doc.state in ('sale', 'done')">
+                <t t-set="rental_signature_layout"
+                   t-value="doc._rental_signature_layout()"/>
+                <div t-if="rental_signature_layout['spacer_mm'] > 0"
+                     t-attf-style="{{ 'page-break-before: always; ' if rental_signature_layout['new_page'] else '' }}height: {{ '%.1f' % rental_signature_layout['spacer_mm'] }}mm;"/>
+                <div name="rental_signature"
+                     style="padding-top: 8mm; page-break-inside: avoid;">
+                    <div class="row">
+                        <div class="col-6 offset-3 text-center">
+                            <div style="height: 60px;"></div>
+                            <div style="border-top: 1px solid #000000; padding-top: 4px;">
+                                Firma de conformidad del cliente
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </t>
         </xpath>
         <xpath expr="//t[@t-set='layout_document_title']" position="replace">
             <t t-set="layout_document_title">
@@ -88,6 +81,7 @@
 
     <template id="report_rental_order">
         <t t-call="web.html_container">
+            <t t-set="is_rental_confirmation" t-value="True"/>
             <t t-foreach="docs" t-as="doc">
                 <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang"/>
             </t>

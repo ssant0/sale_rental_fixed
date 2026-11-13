@@ -91,14 +91,16 @@ repository.
   keep model and view conditions in sync.
 - Deliveries/returns create real stock moves. Partial returns, damage charges,
   recurring invoicing and CFDI de anticipo are out of scope for v1.
-- Confirmed rental PDFs end with a blank black signature line for the customer.
-  On short one-page rentals the page becomes `position: relative` with a
-  `min-height`, and the line is anchored to the bottom with
-  `position: absolute`; orders with more than 5 lines keep the normal flow so
-  wkhtmltopdf can paginate them safely. This avoids flexbox, which the
-  wkhtmltopdf version shipped with Odoo does not support. It is print layout
-  only: no field is added and nothing is stored, so the signature is captured
-  by hand on the printed copy.
+- Only the report **Confirmación de renta** carries the blank black signature
+  line; quotations and the standard sale-order PDF never show it. A spacer in
+  normal flow (not absolute positioning or flexbox, which wkhtmltopdf does not
+  support reliably) pushes the line to the bottom of the last page. Its height
+  comes from `sale.order._rental_signature_layout()`, which estimates the
+  content and reads the report paperformat; if the signature does not fit at
+  the bottom of the current page, a forced page break puts it at the bottom of
+  a new page. It is print layout only:
+  no field is added and nothing is stored, so the signature is captured by hand
+  on the printed copy.
 - Rental invoice lines use `rental_income_account_id` when set; otherwise the
   native product/category income account.
 - Notifications are sent once. `write()` resets `rental_late_notified` and

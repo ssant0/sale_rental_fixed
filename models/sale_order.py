@@ -1,4 +1,5 @@
 import logging
+import math
 from datetime import timedelta
 
 from odoo import _, api, fields, models
@@ -171,6 +172,94 @@ class SaleOrder(models.Model):
                 )
             )
         return super().action_confirm()
+
+    # ------------------------------------------------------------------
+    # PDF de confirmación
+    # ------------------------------------------------------------------
+
+    def _rental_signature_layout(self):
+        """Posición de la firma del cliente dentro del PDF de confirmación.
+
+        Devuelve ``{"spacer_mm": float, "new_page": bool}``. El espaciador va
+        en el flujo normal del documento, así que nunca se encima con la tabla.
+        Se calcula a partir del formato de papel y de una estimación del
+        contenido para que la firma quede al pie de la última página; cuando no
+        cabe en la página actual, ``new_page`` fuerza una página nueva y la
+        firma queda al pie de esa página.
+        """
+        self.ensure_one()
+        if not self.is_rental or self.state not in ("sale", "done"):
+            return {"spacer_mm": 0.0, "new_page": False}
+
+        # Fila de fecha/vendedor, encabezado de tabla, totales y holguras.
+        content_mm = 59.0
+        for line in self._get_order_lines_to_report():
+            chars = len(line.name or "")
+            if line.display_type:
+                content_mm += 7.0 + 3.0 * max(
+                    0, math.ceil(chars / 80.0) - 1
+                )
+                continue
+            content_mm += 10.5 + 5.0 * max(
+                0, math.ceil(chars / 65.0) - 1
+            )
+
+        content_mm += 16.0  # fila con las fechas de la renta
+        if self.domicilio_entrega:
+            chars = len(self.domicilio_entrega)
+            content_mm += 14.0 + 5.0 * max(
+                0, math.ceil(chars / 65.0) - 1
+            )
+        for note in (
+            self.note,
+            self.payment_term_id.note,
+            self.fiscal_position_id.note,
+        ):
+            if note:
+                chars = len(note)
+                content_mm += 10.0 + 5.0 * max(
+                    0, math.ceil(chars / 60.0) - 1
+                )
+
+        report = self.env.ref(
+            "sale_rental_fixed.action_report_rental_order",
+            raise_if_not_found=False,
+        )
+        paperformat = (
+            report.get_paperformat()
+            if report
+            else self.env.company.paperformat_id
+        )
+        page_height = (
+            paperformat.print_page_height if paperformat else 0.0
+        ) or 297.0
+        margin_top = paperformat.margin_top if paperformat else 0.0
+        margin_bottom = paperformat.margin_bottom if paperformat else 0.0
+        body_height = max(page_height - margin_top - margin_bottom, 80.0)
+
+        # La primera página gasta espacio en el bloque del cliente y el
+        # título; las siguientes usan todo el cuerpo.
+        first_page = max(body_height - 30.0, 80.0)
+        if content_mm <= first_page:
+            remaining = first_page - content_mm
+        else:
+            remaining = body_height - (
+                (content_mm - first_page) % body_height
+            )
+
+        signature_mm = 30.0
+        gap_mm = 8.0
+        same_page_min = signature_mm + 4.0  # margen ante estimaciones cortas
+        if remaining >= same_page_min:
+            return {
+                "spacer_mm": max(remaining - signature_mm - gap_mm, 0.0),
+                "new_page": False,
+            }
+        # No cabe al pie de la página actual: página nueva y firma al pie.
+        return {
+            "spacer_mm": max(body_height - signature_mm - gap_mm, 0.0),
+            "new_page": True,
+        }
 
     # ------------------------------------------------------------------
     # Ciclo operativo de la renta
