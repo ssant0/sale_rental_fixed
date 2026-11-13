@@ -80,6 +80,10 @@ repository.
 - `domicilio_entrega` is typed on each quotation instead of using the contact
   address: the same customer may receive rentals at different addresses, and
   the field must stay out of the invoicing address.
+- Rental PDFs (standard quotation/order and "Confirmación de renta") print only
+  the customer name and RFC: the contact's billing and shipping addresses are
+  suppressed in `report/rental_report.xml`. Do not re-add them; the operational
+  address is `domicilio_entrega`.
 - Price is the product's **fixed per-event tariff** (`rental_price`), not
   prorated by duration, and remains editable per line.
 - Lifecycle is `pending → active → returned → closed`, enforced by
@@ -104,6 +108,10 @@ repository.
 - Security groups use `res.groups.privilege` + `privilege_id`, **not**
   `category_id` (Odoo 19 changed this).
 - Views use Odoo 19 tags: `<list>`, `<pivot>`, `<graph>` (not `<tree>`).
+- `sale.report_saleorder_document` builds the customer block in
+  `t-set="address"` (contact widget) and the billing/shipping addresses in
+  `t-set="information_block"`. `report/rental_report.xml` overrides those nodes
+  by XPath, so re-check the selectors when upgrading Odoo.
 - `data/ir_cron.xml` and `data/rental_mail_templates.xml` use
   `noupdate="1"`: a module update will not overwrite records already in the
   database. For changes to existing records, edit them via UI/shell or add a

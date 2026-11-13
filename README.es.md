@@ -5,7 +5,7 @@
 Renta de productos con tarifa fija por evento para Odoo 19, separada de las cotizaciones de venta normales.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.2.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.3.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -185,6 +185,7 @@ Reglas que aplica el módulo:
 - Una cotización es **venta XOR renta**. Una vez confirmada, `is_rental` no se puede cambiar: primero cancela y regresa la orden a cotización.
 - Las cotizaciones de renta solo aceptan productos marcados como rentables; la confirmación requiere fecha del evento, entrega, recolección y domicilio de entrega.
 - El domicilio de entrega (`domicilio_entrega`) se captura en cada cotización porque un mismo cliente puede recibir rentas en domicilios distintos; es independiente de la dirección del contacto y de la facturación.
+- Los PDF de renta (cotización y orden confirmada) imprimen solo el nombre y el RFC del cliente, nunca el domicilio del contacto; la dirección operativa es el domicilio de entrega.
 - La recolección no puede ser anterior a la entrega.
 - El precio es la **tarifa fija por evento** del producto, convertida a la moneda de la orden cuando difieren, y permanece editable por línea — nunca se prorratea por duración.
 - Entregar y devolver crean **movimientos reales de inventario** (salida y entrada).
@@ -214,6 +215,7 @@ Reglas que aplica el módulo:
 ## Reportes y automatizaciones
 
 - **Confirmación de renta** — PDF construido sobre `sale.report_saleorder_document`, que agrega las fechas del evento, entrega y recolección, el domicilio de entrega y reemplaza el título del documento en rentas confirmadas. Las rentas confirmadas terminan con una línea en blanco para que el cliente firme la copia impresa a mano. Se imprime desde el encabezado de la orden.
+- **Bloque del cliente en PDF de renta** — la cotización estándar, la orden confirmada y la confirmación de renta muestran solo el nombre y el RFC del cliente; se suprimen las direcciones de facturación y envío del contacto porque la dirección relevante es la capturada en la renta.
 - **Rentas activas** — rentas confirmadas en *Activo*, con cliente, fechas, estado e importe.
 - **Retrasos** — rentas confirmadas cuya fecha de recolección ya pasó y que siguen *Por entregar* o *Activo*; las filas retrasadas se resaltan en rojo en la lista de rentas.
 - **Ingresos (renta vs venta)** — tabla dinámica y gráfica de barras que comparan los ingresos de renta y de venta en órdenes confirmadas.
