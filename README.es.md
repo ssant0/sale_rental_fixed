@@ -5,7 +5,7 @@
 Renta de productos con tarifa fija por evento para Odoo 19, separada de las cotizaciones de venta normales.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.3.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.4.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -214,7 +214,7 @@ Reglas que aplica el módulo:
 
 ## Reportes y automatizaciones
 
-- **Confirmación de renta** — PDF construido sobre `sale.report_saleorder_document`, que agrega las fechas del evento, entrega y recolección, el domicilio de entrega y reemplaza el título del documento en rentas confirmadas. Las rentas confirmadas terminan con una línea en blanco para que el cliente firme la copia impresa a mano. Se imprime desde el encabezado de la orden.
+- **Confirmación de renta** — PDF construido sobre `sale.report_saleorder_document`, que agrega las fechas del evento, entrega y recolección, el domicilio de entrega y reemplaza el título del documento en rentas confirmadas. Las rentas confirmadas terminan con una línea en blanco para que el cliente firme la copia impresa a mano; en confirmaciones cortas de una página la línea se empuja al pie de la página. Se imprime desde el encabezado de la orden.
 - **Bloque del cliente en PDF de renta** — la cotización estándar, la orden confirmada y la confirmación de renta muestran solo el nombre y el RFC del cliente; se suprimen las direcciones de facturación y envío del contacto porque la dirección relevante es la capturada en la renta.
 - **Rentas activas** — rentas confirmadas en *Activo*, con cliente, fechas, estado e importe.
 - **Retrasos** — rentas confirmadas cuya fecha de recolección ya pasó y que siguen *Por entregar* o *Activo*; las filas retrasadas se resaltan en rojo en la lista de rentas.

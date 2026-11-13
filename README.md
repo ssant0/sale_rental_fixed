@@ -5,7 +5,7 @@
 Fixed-price product rentals per event for Odoo 19, kept separate from regular sales quotations.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.3.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.4.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -214,7 +214,7 @@ Rules enforced by the module:
 
 ## Reports and Automations
 
-- **Confirmación de renta** — PDF built on `sale.report_saleorder_document`, adding event, delivery and collection dates, the delivery address and replacing the document title for confirmed rentals. Confirmed rentals close with a blank signature line so the customer can sign the printed copy by hand. Print it from the order header.
+- **Confirmación de renta** — PDF built on `sale.report_saleorder_document`, adding event, delivery and collection dates, the delivery address and replacing the document title for confirmed rentals. Confirmed rentals close with a blank signature line so the customer can sign the printed copy by hand; on short one-page confirmations the line is pushed to the bottom of the page. Print it from the order header.
 - **Customer block on rental PDFs** — the standard quotation, the confirmed order and the rental confirmation show the customer name and RFC only; the contact's billing and shipping addresses are suppressed because the relevant address is the one typed on the rental.
 - **Rentas activas** — confirmed rentals in *Activo*, with partner, dates, status and amount.
 - **Retrasos** — confirmed rentals past their collection datetime that are still *Por entregar* or *Activo*; late rows are highlighted in red in the rental list.
