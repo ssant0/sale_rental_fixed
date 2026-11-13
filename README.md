@@ -5,7 +5,7 @@
 Fixed-price product rentals per event for Odoo 19, kept separate from regular sales quotations.
 
 ![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B?logo=odoo&logoColor=white)
-![Version](https://img.shields.io/badge/version-19.0.1.2.0-green)
+![Version](https://img.shields.io/badge/version-19.0.1.3.0-green)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-LGPL--3-blue)
 ![Tests](https://img.shields.io/badge/tests-manual-lightgrey)
@@ -185,6 +185,7 @@ Rules enforced by the module:
 - A quotation is **sale XOR rental**. Once confirmed, `is_rental` cannot be changed: cancel and return the order to quotation first.
 - Rental quotations only accept products marked as rentable; confirmation requires event, delivery and collection dates plus the delivery address.
 - The delivery address (`domicilio_entrega`) is typed on each quotation because the same customer may receive rentals at different addresses; it is independent from the contact's address and from invoicing.
+- Rental PDFs (quotation and confirmed order) print only the customer's name and RFC, never the contact's address; the operational address is the delivery address.
 - Collection cannot be earlier than delivery.
 - The price is the product's **fixed per-event tariff**, converted to the order currency when they differ, and remains editable per line — it is never prorated by duration.
 - Deliver and return create **real stock moves** (outgoing and incoming).
@@ -214,6 +215,7 @@ Rules enforced by the module:
 ## Reports and Automations
 
 - **Confirmación de renta** — PDF built on `sale.report_saleorder_document`, adding event, delivery and collection dates, the delivery address and replacing the document title for confirmed rentals. Confirmed rentals close with a blank signature line so the customer can sign the printed copy by hand. Print it from the order header.
+- **Customer block on rental PDFs** — the standard quotation, the confirmed order and the rental confirmation show the customer name and RFC only; the contact's billing and shipping addresses are suppressed because the relevant address is the one typed on the rental.
 - **Rentas activas** — confirmed rentals in *Activo*, with partner, dates, status and amount.
 - **Retrasos** — confirmed rentals past their collection datetime that are still *Por entregar* or *Activo*; late rows are highlighted in red in the rental list.
 - **Ingresos (renta vs venta)** — pivot and bar graph comparing rental and sales revenue on confirmed orders.

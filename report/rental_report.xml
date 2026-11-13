@@ -27,6 +27,25 @@
                 </div>
             </div>
         </xpath>
+        <!-- En renta no se imprime el domicilio del contacto: solo su nombre
+             completo y su RFC. La dirección que importa es el domicilio de
+             entrega capturado en la orden. -->
+        <xpath expr="//t[@t-set='address']/div[@t-field='doc.partner_id']" position="replace">
+            <div t-field="doc.partner_id" class="mb-0"
+                 t-options='{"widget": "contact", "fields": ["name"] if doc.is_rental else ["address", "name"], "no_marker": True}'/>
+        </xpath>
+        <xpath expr="//t[@t-set='address']/p[@t-if='doc.partner_id.vat']" position="replace">
+            <p t-if="doc.partner_id.vat" class="mb-0">
+                <t t-if="doc.is_rental">RFC</t>
+                <t t-elif="doc.company_id.account_fiscal_country_id.vat_label" t-out="doc.company_id.account_fiscal_country_id.vat_label"/>
+                <t t-else="">Tax ID</t>: <span t-field="doc.partner_id.vat"/>
+            </p>
+        </xpath>
+        <!-- Las direcciones de facturación y envío del contacto tampoco se
+             imprimen en renta; solo aplica el domicilio de entrega. -->
+        <xpath expr="//t[@t-set='information_block']" position="attributes">
+            <attribute name="t-if">not doc.is_rental</attribute>
+        </xpath>
         <!-- Firma manual del cliente al final del documento confirmado -->
         <xpath expr="//div[@class='page']" position="inside">
             <div class="row mt-5" name="rental_signature"
